@@ -21,19 +21,33 @@ var P2 = new tabris.TextInput({
 }).appendTo(menu);
 
 new tabris.Button({
-  layoutData: {bottom: 5, left: 5, right: 5, height: 50},
+  id: "startGame",
+  layoutData: {bottom: 5, left: 5, right: "50.25%", height: 50},
   text: "Go"
 }).on("select", function(widget){
  if (P1.get("text") == "" || P2.get("text") == ""){
   widget.set("text", "Set your names!")
   menu.set("background", "red")
    time = setTimeout(warning, 2000)
+ } else if (P1.get("text") == P2.get("text") || P2.get("text") == P1.get("text")){
+  widget.set("text", "You cannot have same nickname on both players!")
+  menu.set("background", "red")
+   time = setTimeout(warning, 2000)
  } else {
    KEY1 = player1
    KEY2 = player2
   players.set("text", player = player1);
+  playersi = player
   page.open()
  }
+}).appendTo(menu);
+
+new tabris.Button({
+  id: "showScores",
+  layoutData: {bottom: 5, left: "50.25%", right: 5, height: 50},
+  text: "Show scores"
+}).on("select", function(widget){
+  scores2.open()
 }).appendTo(menu);
 
  function warning(widget){
@@ -226,6 +240,7 @@ texti.set("text", lines = [btn1.get("text")+btn2.get("text")+btn3.get("text"),bt
     setTimeout(pageopen, 1250);
     texti.set({text: "Draw!", font: font = "18px"});
     draws = parseInt(localStorage.getItem(KEY3) || draws) + 1;
+    drawsCount = parseInt(localStorage.getItem(KEY3) || draws) + 1;
       }
 }
 }
@@ -299,7 +314,7 @@ new tabris.Button({
 }).appendTo(chart);
 
 new tabris.Button({
-  layoutData: {bottom: 3, centerX: 0},
+  layoutData: {bottom: 3, left: 95},
   text: "New game"
 }).on("select",function(widget){
   P1.set("text", "")
@@ -323,6 +338,7 @@ new tabris.Button({
   lines = [""];
   num = 0
   menu.open()
+  page.find("#startGame").set("text","Go");
 }).appendTo(chart);
 
 new tabris.Button({
@@ -348,3 +364,119 @@ new tabris.Button({
   texti.set({text: "", font: font = "0px"});
 }).appendTo(chart);
       
+//-------------------------------------------------------------------------------------------------------------------------------------------------
+
+var scores2 = new tabris.Page({
+  topLevel: true,
+	background: "rgb(132,241,76)"
+});
+
+var winsCount;
+var drawsCount;
+var losesCount;
+var matchCount;
+var playersi = [""];
+
+var chart2 = new tabris.Composite({
+  layoutData:{top: 10, left: 10, right: 10, bottom: 10},
+  background: color,
+  cornerRadius: 5
+}).appendTo(scores2);
+
+var scoreTitle = new tabris.TextView({
+  layoutData: {top: 10, centerX: 0},
+  text: "Scores",
+  font: "bold 35px"
+}).appendTo(chart2);
+
+var scroll = new tabris.ScrollView({
+  layoutData: {top: [scoreTitle, 20], left: 5, right: 5, bottom: 60},
+  background: "white"
+}).appendTo(chart2);
+
+var playerList = new tabris.TextView({
+  layoutData: {top: [scoreTitle, 0], left: 15},
+  text: "Player",
+  alignment: "center",
+  font: "bold 15px",
+  markupEnabled: true
+}).on("resize", function(widget){
+  new tabris.TextView({
+    layoutData: {top: [playerList, 2], left: 10},
+    text: playersi,
+    font: "10px",
+    markupEnabled: true,
+    alignment: "center"
+  }).appendTo(scroll);
+}).appendTo(chart2);
+
+var winCount = new tabris.TextView({
+  layoutData: {top: [scoreTitle, 0], left: 80},
+  text: "Wins",
+  alignment: "center",
+  font: "bold 15px",
+  markupEnabled: true
+  }).on("resize", function(widget){
+  new tabris.TextView({
+    layoutData: {top: [playerList, 2], left: 10},
+    text: winsCount,
+    font: "10px",
+    markupEnabled: true,
+    alignment: "center"
+  }).appendTo(scroll);
+}).appendTo(chart2);
+
+var draws2 = new tabris.TextView({
+  layoutData: {top: [scoreTitle, 0], right: 160},
+  text: "Draws",
+  alignment: "center",
+  font: "bold 15px",
+  markupEnabled: true
+  }).on("resize", function(widget){
+  new tabris.TextView({
+    layoutData: {top: [playerList, 2], left: 10},
+    text: drawsCount,
+    font: "10px",
+    markupEnabled: true,
+    alignment: "center"
+  }).appendTo(scroll);
+}).appendTo(chart2);
+
+var loseCount = new tabris.TextView({
+  layoutData: {top: [scoreTitle, 0], right: 100},
+  text: "Loses",
+  alignment: "center",
+  font: "bold 15px",
+  markupEnabled: true
+  }).on("resize", function(widget){
+  new tabris.TextView({
+    layoutData: {top: [playerList, 2], left: 10},
+    text: losesCount,
+    font: "10px",
+    markupEnabled: true,
+    alignment: "center"
+  }).appendTo(scroll);
+}).appendTo(chart2);
+
+var matches = new tabris.TextView({
+  layoutData: {top: [scoreTitle, 0], right: 25},
+  text: "Matches",
+  alignment: "center",
+  font: "bold 15px",
+  markupEnabled: true
+  }).on("resize", function(widget){
+  new tabris.TextView({
+    layoutData: {top: [playerList, 2], left: 10},
+    text: (winsCount + drawsCount + losesCount),
+    font: "10px",
+    markupEnabled: true,
+    alignment: "center"
+  }).appendTo(scroll);
+}).appendTo(chart2);
+
+var back = new tabris.Button({
+  layoutData: {bottom: 5, left: 5, right: "50%", height: 50},
+  text: "Back"
+}).on("select", function(){
+  menu.open()
+}).appendTo(chart2);
